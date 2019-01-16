@@ -1,0 +1,4 @@
+﻿  Data.cpp
+f:\c++\date类及 各运算符重载\date类及 各运算符重载\data.cpp(123): warning C4172: 返回局部变量或临时变量的地址: ret
+f:\c++\date类及 各运算符重载\date类及 各运算符重载\data.cpp(137): warning C4172: 返回局部变量或临时变量的地址: ret
+  Date类及 各运算符重载.vcxproj -> F:\c++\Date类及 各运算符重载\Debug\Date类及 各运算符重载.exe
