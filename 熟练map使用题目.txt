@@ -1,0 +1,158 @@
+给一非空的单词列表，返回前 k 个出现次数最多的单词。
+
+返回的答案应该按单词出现频率由高到低排序。如果不同的单词有相同出现频率，按字母顺序排序。
+
+示例 1：
+
+输入: ["i", "love", "leetcode", "i", "love", "coding"], k = 2
+输出: ["i", "love"]
+解析: "i" 和 "love" 为出现次数最多的两个单词，均为2次。
+    注意，按字母顺序 "i" 在 "love" 之前。
+ 
+
+示例 2：
+
+输入: ["the", "day", "is", "sunny", "the", "the", "the", "sunny", "is", "is"], k = 4
+输出: ["the", "is", "sunny", "day"]
+解析: "the", "is", "sunny" 和 "day" 是出现次数最多的四个单词，
+    出现次数依次为 4, 3, 2 和 1 次。
+
+class Solution {
+public:
+    vector<string> topKFrequent(vector<string>& words, int k) {
+        //1.
+        map<string ,int >countmap;
+        for(const string& s:words)
+            countmap[s]++;
+        
+        multimap<int,string,greater<int>>sortmap;
+        for(const auto& kv:countmap)
+        {
+                sortmap.insert(make_pair(kv.second,kv.first));
+        }
+        vector<string>v;
+        multimap<int,string>::iterator it=sortmap.begin();
+        while(it != sortmap.end()&&k--)
+        {
+            v.push_back(it->second);
+            ++it;
+        }
+        return v;
+        
+    }
+};
+
+1.重复N次的元素
+class Solution
+{
+	public：
+	int repeatedNTimes(vector<int>& A)
+	{
+		size_t N=A.size()/2;
+
+		//用unordered_map 统计每个元素出现的次数
+		unordered_map<int,int> m;
+		for(auto e:A)
+		{
+			m[e]++;
+		
+
+		//找出出现的次数为N的元素
+		for(auto& e : m)
+		{
+			if(e.second==N)
+			return e.first;
+		}
+	}
+}；
+
+2.这句话中不常见的单词
+//1.使用unordered_map 统计两句话中每个单词出现次数
+//2.遍历unordered_map，出现次数为1的单词即为不常见单词
+
+class Soultion
+{
+public:
+	vector<string> uncommomFromSentences(string A,string B)
+	{
+		unordered_map<string,int>m;
+		PartionWord(A,m);
+		PartionWord(B,m);
+
+		vector<string> vRet;
+		for(auto& e : m)
+		{
+			if(1==e.second)
+			vRet.push_back(e.first);
+		}
+		return vRet;
+	}
+
+	//将str语句中的单词分割开，并插入到unordered_map 中
+
+	void PartionWord(const string& str,unordered_map<string,int>& m)
+	{
+		string strWord;
+		int start =0,last=0;
+		do
+		{
+			last=str.find(' ',start);
+			strWord=str.substr(start,last-start);
+			m[strWord]++;
+			start=last+1;
+	
+		}while(-1!=last);
+	}
+};
+
+3.存在重复元素
+class Solution
+{
+	public:
+	bool containsDuplicate(vector<int>& nums)
+	{
+		unordered_set<int> s;
+		for(auto e:nums)
+		{
+			if(s.find(e)==s.end())
+			{
+				s.insert(e);
+			}
+			else
+				return true;
+		
+		}
+		return false;
+	}
+}
+
+4.两个数组的交集I
+class Soution
+{
+	public:
+	vector<int> intersection(vector<int>&nums1,vector<int>& nums2)
+	{
+		//用unordered_set对nums1中的元素去重
+		unrodered_ser<int> s1;
+		for(auto e:nums1)	
+		{
+			s1.insert(e);
+		}
+		//用unorder_set对nums2中的元素去重
+		unordered_set<int> s2;
+		for(auto e :nums2)
+		s2.insert(e);
+		
+		//遍历s1，如果s1中某个元素在s2中出现过。即为交集
+		vector<int> vRet;
+		for(auto e : s1)
+		{
+			for(auto e：s1)
+			{
+				if(s2.find(e)!==s2.end())
+				vRet.push_back(e);
+			}
+		}
+		return vRet;
+	}
+};
