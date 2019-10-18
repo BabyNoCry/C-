@@ -1,0 +1,123 @@
+#include<iostream>
+#include<mutex>
+using namespace std;
+template<class T>
+class sharedptr
+{
+private:
+	T* _ptr;
+	int* _count;
+	mutex* _pMutex;
+
+private:
+	void Release()
+	{
+		bool deleteflag = false;
+		//引用计数减一，如果减到0，则释放资源
+		_pMutex.lock();
+		if (--(*_count) == 0)
+		{
+			delete _ptr;
+			delete _count;
+			deleteflag = true;
+		}
+		_pMutex.unlock();
+
+		if (deleteflag)
+		{
+			delete _pMutex;
+		}
+	}
+
+public:
+	sharedptr(T* ptr = nullptr)
+		:_ptr(ptr)
+		, _count(new int(1))
+		, _pMutex(new mutex)
+	{
+
+	}
+
+	
+
+	//拷贝构造 
+	sharedptr(const sharedptr<T>& sp)
+		: _ptr(sp.ptr)
+		, _count(sp.count)
+		, _pMutex(sp.count)
+	{
+		addCount();
+	}
+
+	//赋值重载
+	sharedptr& operator=(const sharedptr& sp)
+	{
+
+		//防止自己自己赋值 
+		if (_ptr != sp._ptr)
+		{
+			//释放自己的资源 
+			Release();
+
+			//共享管理新对象的资源,并增加引用计数 
+			_ptr = sp._ptr;
+			_count = sp._count;
+			_pMutex = sp._pMutex;
+
+			addCount();
+		}
+		return *this;
+
+	}
+
+	T& operator*()
+	{
+		return *_ptr;
+	}
+	T* operator->()
+	{
+		return _ptr;
+	}
+	void addCount()
+	{
+		_pMutex.lock();
+		++(*_count);
+		_pMutex.unlock();
+	}
+	int use_count()
+	{
+		return *_count;
+	}
+	T* Get
+	{
+		return _ptr;
+	}
+
+	~sharedptr()
+	{
+		Release();
+	}
+
+
+};
+
+int main()
+{
+	sharedptr<int> sp1(new int(10));
+	sharedptr<int> sp2(sp1);
+	*sp2 = 20;
+	cout << sp1.use_count() << endl;
+	cout << sp2.use_count() << endl;
+
+	sharedptr<int> sp3(new int(10));
+	sp2 = sp3;
+	cout << sp1.use_count() << endl;
+	cout << sp2.use_count() << endl;
+	cout << sp3.use_count() << endl;
+
+	sp1 = sp3;
+	cout << sp1.use_count() << endl;
+	cout << sp2.use_count() << endl;
+	cout << sp3.use_count() << endl;
+		return 0;
+}
